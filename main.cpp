@@ -1,4 +1,16 @@
-	
+/**************************************************************************************************************
+** The game is played by two AI players not a user, the user only watches the outcome.                       **
+** There are two players X and O. X uses a Genetic algorithm which mimics the process of                     **
+** natural evolution, which in a sense is survival of the fittest, in which I mean the best                  **
+** possible outcome of the parents child (genes/ chromosomes.) will be selected for the X                    **
+** player’s possible moves. In the case of a coupling problem, the chromosomes paring a ginger               **  
+** child will be chosen. A ginger child for this program is a random selection based on the parents          **
+** chromosomes. The O player, considering the game is based on genetics being the choice of play,            **
+** the thought of O being chosen at random seemed fitting because some people think evolutionary change      **
+** (mutation) happens at random. So the thought of a random selection beating out a scientific approach      **
+** of finding the best coupling of two genes is interesting. For every test case the genetic algorithm was   **
+** faster and won many more games than the O player                                                          **
+**************************************************************************************************************/
 #include <iostream>
 #include <string>
 #include <vector>
@@ -33,10 +45,9 @@ ofstream myfile;
 	 
 int main()
 {
-      myfile.open ("tic.txt");
-      char theGameIsGoing = 'y';         
-      
-	  while (theGameIsGoing == 'y'){   
+       myfile.open ("tic.txt");
+      char theGameIsGoing = 'y';          
+      while (theGameIsGoing == 'y'){   
         BOARD_WIDTH;
         BOARD_SIZE = BOARD_WIDTH * BOARD_WIDTH;         
         moveCount = 0;         
@@ -54,15 +65,15 @@ int main()
               win = false;
               win = isWinner(gameBoard, startPlayerX, BOARD_SIZE);
                 if (win == true){
-                  myfile << "\n\nPlayer X(gene) has won!\n\n";
-				  cout << "\n\nPlayer X(gene) has won!\n\n";
+                  cout << "\n\nPlayer X(gene) has won!\n\n";
+				  myfile << "\n\nPlayer X(gene) has won!\n\n";
 
                   break;
                 }              
              
                 if (isTie()){
-                  myfile << "\n\nCats game\n\n";
-				  cout << "\n\nCats game\n\n";
+                  cout << "\n\nCats game\n\n";
+				  myfile << "\n\nCats game\n\n";
                   break;
 				}
             
@@ -71,17 +82,16 @@ int main()
               win = false;
               win = isWinner(gameBoard, startPlayerO, BOARD_SIZE);
                 if (win == true){
-                  myfile << "\n\nPlayer O  won!\n\n";
-				   cout << "\n\nPlayer O  won!\n\n";
-
+                  cout << "\n\nPlayer O  won!\n\n";
+				  myfile << "\n\nPlayer O  won!\n\n";
                   break;
 				}                    
              }                
-          myfile << "\n\nRun once more? (y/n): ";
-		  cout << "\n\nRun once more? (y/n): ";
+          cout << "\n\nRun once more? (y/n): ";
+		  myfile << "\n\nRun once more? (y/n): ";
           cin >> theGameIsGoing;         
-          myfile << "\n\n";
-		  cout << "\n\n";
+          cout << "\n\n";
+		  myfile << "\n\n";
       }
 
       return 0;
@@ -107,25 +117,26 @@ bool checkForWin(char gameBoard[], char playerTurns, int spaceCount, int iStart,
 void drawBoard(char gameBoard[], bool helpDrawCount){
   
 	int rowCount = 0;    
-    myfile << "\n\n";
-	cout << "\n\n";  
+    cout << "\n\n"; 
+	myfile << "\n\n";
 	for (int i = 0; i < BOARD_SIZE; i++){     
       
-         myfile << gameBoard[i];   
-		 cout << gameBoard[i];
+         cout << gameBoard[i];
+		 myfile << gameBoard[i];  
+
          if (rowCount < BOARD_WIDTH ){
-            if (i < 11)
-               myfile << " | ";
-			   cout << " | ";
-               else
-                 myfile << " | ";
-			     cout << " | ";
+            if (i < 11){
+               cout << " | ";
+			   myfile << " | ";}
+               else{
+                 cout << " | ";
+				 myfile << " | ";}
             }      
           rowCount++;
        
         if (rowCount == BOARD_WIDTH){          
-          myfile << endl; 
-		  cout << endl;
+          cout << endl;   
+		  myfile << endl; 
           int actualWidth;
           
 		  if (helpDrawCount)
@@ -133,16 +144,16 @@ void drawBoard(char gameBoard[], bool helpDrawCount){
             else
                 actualWidth = BOARD_WIDTH * 3;            
             
-            for (int line = -4; line < actualWidth; line++)
-                myfile << "-";
-			    cout << "-";  
-            myfile << endl;
-			cout << endl; 
-            rowCount = 0;
+            for (int line = -4; line < actualWidth; line++){
+            cout << "-";
+			myfile << "-";}    
+			cout << endl;			 			
+			myfile << endl;
+			rowCount = 0;
         }
     }
-    myfile << "\n\n";
-	cout << "\n\n";
+    cout << "\n\n";
+	myfile << "\n\n";
 }
 
 int askForMove(char gameBoard[], char playerTurns){
@@ -162,11 +173,11 @@ int askForMove(char gameBoard[], char playerTurns){
 	  }
 	mostFit( gameBoard);
 			if (playerTurns=='X'){
-				 myfile << "Player X(Gene) played ";
-				 cout << "Player X(Gene) played ";}
+				 cout << "Player X(Gene) played ";
+				 myfile << "Player X(Gene) played ";}
 			else {
-				myfile<< "Player O played ";
 				cout<< "Player O played ";
+				myfile<< "Player O played ";
 			}
     while (true){
         bool validMove = makeMove(gameBoard, playerTurns, userInput);
@@ -215,7 +226,12 @@ bool isWinner(char gameBoard[], char playerTurns, int sizeOfArray){
 
 bool makeMove(char gameBoard[], char playerTurns, int playerMove){    
    
-	
+	if (playerMove < 0 || playerMove > BOARD_SIZE){
+        cout << "This is not a valid tile.\n";
+		myfile << "This is not a valid tile.\n";
+        return false;
+	}
+	   
     if (gameBoard[playerMove] == empt){
         gameBoard[playerMove] = playerTurns;       
         moveCount += 1;     
@@ -279,8 +295,8 @@ int middleChild (char gameBoard[]){
 		}
 	}
 	if (!end && c<0  || gameBoard[c]=='O'||gameBoard[c]=='X'){
-		myfile<<"Bad chromosome going Ginger!\n";
-		cout<<"Bad chromosome going Ginger!\n";
+		cout<<"Bad chromosome, going Ginger!\n";
+		myfile<<"Bad chromosome, going Ginger!\n";
 		middleKidChroms=ginger(gameBoard);
 		}
 	
